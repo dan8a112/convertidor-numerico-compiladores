@@ -13,5 +13,6 @@ def read_content_txt(path: str):
     
 #Funcion que recibe una entrada, un string y retorna un array de str con las lineas
 def split_input(input: str):
-    lines = input.splitlines()
-    return lines
+    lines = input.split("$") #se separan por delimitador $
+    clean_lines = [line.strip() for line in lines] #Se borran los espacios en blanco
+    return clean_lines
