@@ -1,3 +1,5 @@
+import re
+
 #Funcion que recibe una ruta o nombre de archivo y retorna cada linea de este archivo
 def read_content_txt(path: str):
     try:
@@ -13,6 +15,6 @@ def read_content_txt(path: str):
     
 #Funcion que recibe una entrada, un string y retorna un array de str con las lineas
 def split_input(input: str):
-    lines = input.split("$") #se separan por delimitador $
-    clean_lines = [line.strip() for line in lines] #Se borran los espacios en blanco
-    return clean_lines
+    # Busca cualquier secuencia que termine en '$'
+    matches = re.findall(r'[^$]+?\$', input)
+    return [match.strip() for match in matches]

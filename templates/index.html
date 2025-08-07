@@ -48,7 +48,13 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Relleno dinámico -->
+                                {% for tok in tokens %}
+                                    <tr>
+                                        <td>{{tok.line}}</td>
+                                        <td>{{tok.type}}</td>
+                                        <td>{{tok.value}}</td>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
