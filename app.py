@@ -1,27 +1,43 @@
-from flask import Flask, render_template, Response
-from logic.analyzer import analyze_input
-from logic.inputs import read_content_txt, split_input
+from flask import Flask, render_template, request
+from logic.lexer import lexical_analyzer
+from logic.parser import parser, results
+from logic.inputs import split_input
 
 app = Flask(__name__)
 
-
-@app.route("/", methods=["GET"])
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    tokens_list = []
+    resultados = []
 
-    input = read_content_txt("./inputs/entradas.txt") #Se leen las entradas del archivo
-    toks = analyze_input(input)  #Obtiene los tokens haciendo el analisis lexico
+    if request.method == 'POST':
+        entrada = request.form['entrada']
+        lineas = split_input(entrada)
+        results.clear() # Para evitar resultados duplicados de parseos anteriores
 
-    return render_template("index.html", input=input, tokens=toks)
+        for i, linea in enumerate(lineas):
+            lexical_analyzer.input(linea)
+            while True:
+                tok = lexical_analyzer.token()
+                if not tok:
+                    break
+                tokens_list.append({
+                    'line': i + 1,
+                    'type': tok.type,
+                    'value': tok.value
+                })
 
+            try:
+                parser.parse(linea, lexer=lexical_analyzer)
+            except Exception as e:
+                resultados.append((linea, f"Error: {e}"))
+                continue
 
-# Ruta de pruebas (Al final se va  aborrar)
-@app.route("/debug", methods=["GET"])
-def debug_view():
+        for r in results:
+            numero, tipo, salida = r
+            resultados.append((f"{numero}{tipo}$", salida))
 
-    print("Pruebas")
+    return render_template('index.html', tokens=tokens_list, resultados=resultados)
 
-    return Response(f"Se ha procesado la prueba", mimetype="text/plain")
-
-
-if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False)
+if __name__ == '__main__':
+    app.run(debug=True)

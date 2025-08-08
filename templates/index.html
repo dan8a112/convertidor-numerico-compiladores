@@ -1,97 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css" />
     <title>Conversor de numeros</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container py-5">
-        <!-- Título -->
-        <div class="text-center mb-5">
-            <h1 class="display-3">Traductor de sistemas de numeración</h1>
+      <!-- Título -->
+      <div class="text-center mb-5">
+        <h1 class="display-3">Traductor de sistemas de numeración</h1>
+      </div>
+
+      <!-- Sección de entrada -->
+      <div class="bg-secondary bg-opacity-10 p-4 rounded-4 mb-4">
+        <form method="POST">
+          <label for="entrada" class="form-label"
+            >Ingresa una entrada a convertir</label
+          >
+          <div class="row g-3">
+            <div class="col-md-10">
+              <textarea
+                id="entrada"
+                name="entrada"
+                class="form-control"
+                rows="2"
+                placeholder="Ej: 123HEX$&#10;54BIN$"
+              >
+{{ request.form['entrada'] if request.form.get('entrada') else '' }}</textarea
+              >
+            </div>
+            <div class="col-md-2 d-grid">
+              <button class="btn btn-success" type="submit">
+                Convertir Entrada
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Secciones de análisis -->
+      <div class="row g-4">
+        <!-- Análisis Léxico -->
+        <div class="col-md-6">
+          <div class="card shadow-sm rounded-4">
+            <div class="card-header bg-light fw-bold fs-5 rounded-top-4">
+              Análisis Léxico
+            </div>
+            <div class="card-body">
+              <h6 class="fw-semibold">Analisis de Tokens</h6>
+              <table class="table table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>Línea</th>
+                    <th>Tipo</th>
+                    <th>Elemento</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for tok in tokens %}
+                  <tr>
+                    <td>{{tok.line}}</td>
+                    <td>{{tok.type}}</td>
+                    <td>{{tok.value}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
-        <!-- Sección de entrada -->
-        <div class="bg-secondary bg-opacity-10 p-4 rounded-4 mb-4">
-            <label for="entrada" class="form-label">Ingresa una entrada a convertir</label>
-            <div class="row g-3">
-                <div class="col-md-10">
-                    <textarea id="entrada" class="form-control" rows="2"
-                        placeholder="Ej: 123Hexa$&#10;54Bin$">{{input}}</textarea>
-                </div>
-                <div class="col-md-2 d-grid">
-                    <button class="btn btn-success">Convertir Entrada</button>
-                </div>
+        <!-- Análisis Sintáctico -->
+        <div class="col-md-6">
+          <div class="card shadow-sm rounded-4">
+            <div class="card-header bg-light fw-bold fs-5 rounded-top-4">
+              Análisis Sintáctico
             </div>
+            <div class="card-body">
+              <h6 class="fw-semibold">Resultados</h6>
+              <table class="table table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for entrada, salida in resultados %}
+                  <tr>
+                    <td>{{entrada}}</td>
+                    <td>{{salida}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <h6 class="fw-semibold mt-4">Árbol</h6>
+              <div
+                class="border rounded p-3 bg-white"
+                style="min-height: 150px"
+              >
+                <strong>NUMERO</strong><br />
+                └── PALABRA<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── FIN
+              </div>
+            </div>
+          </div>
         </div>
-
-        <!-- Secciones de análisis -->
-        <div class="row g-4">
-            <!-- Análisis Léxico -->
-            <div class="col-md-6">
-                <div class="card shadow-sm rounded-4">
-                    <div class="card-header bg-light fw-bold fs-5 rounded-top-4">
-                        Análisis Léxico
-                    </div>
-                    <div class="card-body">
-                        <h6 class="fw-semibold">Analisis de Tokens</h6>
-                        <table class="table table-bordered">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Línea</th>
-                                    <th>Tipo</th>
-                                    <th>Elemento</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for tok in tokens %}
-                                    <tr>
-                                        <td>{{tok.line}}</td>
-                                        <td>{{tok.type}}</td>
-                                        <td>{{tok.value}}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Análisis Sintáctico -->
-            <div class="col-md-6">
-                <div class="card shadow-sm rounded-4">
-                    <div class="card-header bg-light fw-bold fs-5 rounded-top-4">
-                        Análisis Sintáctico
-                    </div>
-                    <div class="card-body">
-                        <h6 class="fw-semibold">Resultados</h6>
-                        <table class="table table-bordered">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Entrada</th>
-                                    <th>Salida</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Relleno dinámico -->
-                            </tbody>
-                        </table>
-
-                        <h6 class="fw-semibold mt-4">Árbol</h6>
-                        <div class="border rounded p-3 bg-white" style="min-height: 150px;">
-                            <strong>NUMERO</strong><br>
-                            └── PALABRA<br>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── FIN
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>
