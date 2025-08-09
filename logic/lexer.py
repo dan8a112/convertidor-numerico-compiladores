@@ -10,7 +10,7 @@ tokens = (
 
 # Expresiones regulares para los tokens
 t_FIN = r'\$'
-t_TIPO = r'(BIN|HEX|DEC|ROM|NEW|ALE)'
+t_TIPO = r'(BIN|HEX|DEC|ROM|NEW|ALE|OCT|PENTA)'
 
 lexer_errors = []  # Lista global para guardar errores
 
