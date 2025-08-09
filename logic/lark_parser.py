@@ -6,7 +6,7 @@ grammar = """
     expresion: NUMERO TIPO FIN
 
     NUMERO: /[0-9]+/
-    TIPO: "BIN" | "HEX" | "DEC" | "ROM" | "ALE"
+    TIPO: "BIN" | "HEX" | "ROM" | "ALE" | "OCT" | "PENTA"
     FIN: "$"
 
     %ignore " "

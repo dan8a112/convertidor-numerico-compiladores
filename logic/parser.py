@@ -15,12 +15,14 @@ def p_expresion(p):
         resultado = a_binario(numero)
     elif tipo == "HEX":
         resultado = a_hexadecimal(numero)
-    elif tipo == "DEC":
-        resultado = str(numero)
     elif tipo == "ROM":
         resultado = a_romano(numero)
+    elif tipo == "OCT":
+        resultado = a_octal(numero)
     elif tipo == "ALE":
         resultado = a_aleatorio(numero)
+    elif tipo == "PENTA":
+        resultado = a_penta(numero)
     else:
         resultado = "Tipo no reconocido"
 
