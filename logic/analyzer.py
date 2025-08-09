@@ -1,4 +1,4 @@
-from logic.lexer import lexical_analyzer
+from logic.lexer import lexical_analyzer, lexer_errors
 
 
 def analyze_input(input_str: str):
@@ -13,8 +13,7 @@ def analyze_input(input_str: str):
             "type": tok.type,
             "value": tok.value,
             "line": tok.lineno,
-            "position": tok.lexpos
         }
         tokens_list.append(token_info)
 
-    return tokens_list
+    return tokens_list, lexer_errors

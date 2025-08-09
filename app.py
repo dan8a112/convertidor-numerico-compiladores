@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from logic.lexer import lexical_analyzer
+from logic.analyzer import analyze_input
 from logic.parser import parser, results
 from logic.inputs import split_input
 
@@ -11,40 +12,38 @@ app = Flask(__name__)
 def index():
     tokens_list = []
     resultados = []
-    arbol = ""
+    lexer_errors = []
+    trees = []
 
     if request.method == 'POST':
         entrada = request.form['entrada']
         lineas = split_input(entrada)
-        results.clear() # Para evitar resultados duplicados de parseos anteriores
+        results.clear()
 
-        for i, linea in enumerate(lineas):
-            lexical_analyzer.input(linea)
-            while True:
-                tok = lexical_analyzer.token()
-                if not tok:
-                    break
-                tokens_list.append({
-                    'line': i + 1,
-                    'type': tok.type,
-                    'value': tok.value
-                })
+        tokens_list, lexer_errors = analyze_input(entrada)
 
-            try:
-                parser.parse(linea, lexer=lexical_analyzer)
-            except Exception as e:
-                resultados.append((linea, f"Error: {e}"))
-                continue
+        if lexer_errors:
+            # Detiene la ejecución, solo muestra los errores léxicos
+            resultados.append(("Error léxico", "Corrige los errores léxicos para continuar."))
+        else:
+            # No hay errores léxicos, continuar parseo
+            for linea in lineas:
+                trees.append(generar_arbol(lineas[0]))
+                try:
+                    parser.parse(linea, lexer=lexical_analyzer)
+                except Exception as e:
+                    resultados.append((linea, f"Error: {e}"))
+                    continue
 
-        for r in results:
-            numero, tipo, salida = r
-            resultados.append((f"{numero}{tipo}$", salida))
+            for r in results:
+                numero, tipo, salida = r
+                resultados.append((f"{numero}{tipo}$", salida))
 
-            # Generar el árbol sintáctico
-        if lineas:
-            arbol = generar_arbol(lineas[0])
-
-    return render_template('index.html', tokens=tokens_list, resultados=resultados , arbol=arbol)
+    return render_template('index.html',
+                           tokens=tokens_list,
+                           resultados=resultados,
+                           trees=trees,
+                           lexer_errors=lexer_errors)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

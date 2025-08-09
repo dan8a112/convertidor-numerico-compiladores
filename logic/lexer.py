@@ -1,5 +1,6 @@
 import ply.lex as lex
 
+
 # Lista de nombres de tokens
 tokens = (
     'NUMERO',
@@ -10,6 +11,8 @@ tokens = (
 # Expresiones regulares para los tokens
 t_FIN = r'\$'
 t_TIPO = r'(BIN|HEX|DEC|ROM|NEW|ALE)'
+
+lexer_errors = []  # Lista global para guardar errores
 
 def t_NUMERO(t):
     r'\d+'
@@ -22,11 +25,12 @@ def t_newline(t):
     t.lexer.lineno += len(t.value)
 
 # Ignorar espacios y tabulaciones
-t_ignore = ' \t'
+t_ignore = ' \t\r'
 
 # Manejo de errores
 def t_error(t):
-    print(f"Carácter ilegal: {t.value[0]}")
+    error_msg = f"Carácter ilegal '{t.value[0]}' en la línea {t.lexer.lineno}"
+    lexer_errors.append(error_msg)
     t.lexer.skip(1)
 
 # Construir el analizador léxico
