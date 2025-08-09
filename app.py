@@ -3,12 +3,15 @@ from logic.lexer import lexical_analyzer
 from logic.parser import parser, results
 from logic.inputs import split_input
 
+from logic.lark_parser import generar_arbol
+
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     tokens_list = []
     resultados = []
+    arbol = ""
 
     if request.method == 'POST':
         entrada = request.form['entrada']
@@ -37,7 +40,11 @@ def index():
             numero, tipo, salida = r
             resultados.append((f"{numero}{tipo}$", salida))
 
-    return render_template('index.html', tokens=tokens_list, resultados=resultados)
+            # Generar el árbol sintáctico
+        if lineas:
+            arbol = generar_arbol(lineas[0])
+
+    return render_template('index.html', tokens=tokens_list, resultados=resultados , arbol=arbol)
 
 if __name__ == '__main__':
     app.run(debug=True)
